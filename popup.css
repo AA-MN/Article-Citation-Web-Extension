@@ -26,3 +26,8 @@ label { display: block; margin: 12px 0 6px; color: #52645f; font-size: 12px; fon
 label:first-child { margin-top: 0; }
 input { width: 100%; padding: 9px; border: 1px solid #b7c6bd; border-radius: 6px; font: inherit; font-size: 13px; background: white; color: #182b28; }
 input:focus-visible { outline: 2px solid #215c4d; outline-offset: 2px; }
+
+small { display: block; margin-top: 5px; font-size: 11px; line-height: 1.4; color: #52645f; }
+#citation-section { margin-top: 16px; }
+#citation-output { font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+[hidden] { display: none !important; }

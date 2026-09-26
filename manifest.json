@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Article Citation",
-  "version": "0.2.0",
-  "description": "Extract and review article metadata. Citation formatting is planned.",
+  "version": "0.3.0",
+  "description": "Review article metadata and generate MLA 9 works-cited entries locally.",
   "permissions": [
     "activeTab",
     "scripting"
