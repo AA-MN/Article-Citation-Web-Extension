@@ -1,3 +1,4 @@
+// Modified 2026-09-26 for Article Citation Helper: guarded CommonJS export for browser loading.
 /*
 Copyright (c) 2009-2019 Frank Bennett
 

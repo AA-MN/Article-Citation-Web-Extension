@@ -1,41 +1,80 @@
-# Article Citation Web Extension
+# Article Citation Helper
 
-A Chrome extension that will extract article information and generate MLA and AMA citations.
+A Chrome extension that reads article metadata, lets you correct it, and generates MLA 9 or AMA 11 references. Formatting runs locally, without an AI API or backend server.
 
-## Project status
-Article metadata extraction was manually checked on a standalone Fox News article. MLA generation and copying have been manually checked with Fox News, CNN, and NBC examples. The latest version adds an MLA 9 / AMA 11 selector; AMA browser verification is pending. Individual live-blog updates are not supported.
+## Features
+- Extract article titles, authors, publication names, publication dates, and URLs from common JSON-LD and meta tags.
+- Review and edit extracted fields before formatting.
+- Generate an MLA works-cited entry or an AMA reference.
+- Copy formatted citations, with a plain-text fallback.
+- Clear stale citations when a field or style changes.
+- Flag live coverage so page-level metadata is not mistaken for an individual update.
 
-## Load and test
-1. Open `chrome://extensions`, enable Developer mode, and choose Load unpacked.
-2. Select this repository folder. After code changes, click the extension's Reload button.
-3. Open a news article and click Article Citation.
-4. Compare each field against the article and correct it if needed.
-5. Select MLA 9 or AMA 11, click Generate, review the result, and click Copy citation. Paste into a rich-text editor to check italics.
-6. Edit a field: the old citation should disappear. Generate again to use the new values.
+## Install locally
+This project is not currently distributed through the Chrome Web Store.
 
-Missing fields display a “Not found” placeholder. Edits are temporary and reset when the popup closes. Live-page details describe the whole page, not individual updates. Extraction supports common JSON-LD and meta tags; it does not guarantee compatibility with every publisher. For formatting, dates accept YYYY-MM-DD (including ISO timestamps), YYYY-MM, or YYYY. Invalid dates require correction. Names default to last-word-as-family-name; use `Family, Given` for complex names, semicolons for multiple authors, and `{Organization Name}` for organizations. Always review name order. The access date is the current local date.
+1. Clone the repository or download and extract its ZIP.
+2. Open `chrome://extensions` in Chrome.
+3. Enable **Developer mode** and click **Load unpacked**.
+4. Select the folder containing `manifest.json`.
+5. Open a standalone news article, then choose **Article Citation Helper** from Chrome's extensions menu.
 
-The `activeTab` and `scripting` permissions allow reading page metadata when you open the extension. It does not send page content to a server.
+No package installation or build step is needed to run the extension. After changing files, reload the extension on `chrome://extensions` and reopen the popup.
 
-## Automated checks
-With Node.js installed, run `node --test tests/*.test.cjs`. These tests cover metadata parsing, malformed JSON, missing dates, live updates, and selecting the current article. They do not replace browser testing.
+## Use
+1. Compare the extracted fields with the article and correct them if needed.
+2. Choose **MLA 9** or **AMA 11** and click **Generate**.
+3. Review the result, then click **Copy citation**.
+4. Paste into a rich-text editor to preserve formatting when supported. Plain-text copying does not preserve italics.
 
-## Planned features
-- Extract article titles, authors, publication names, dates, and URLs.
-- Let users review and correct extracted information.
-- Generate MLA and AMA citations.
-- Copy citations to the clipboard.
+Dates accept `YYYY-MM-DD`, ISO timestamps, `YYYY-MM`, or `YYYY`. Leave unknown dates blank. Separate authors with semicolons. For complex names, use `Family, Given`; wrap an organization in braces, such as `{Fox News Staff}`. Review inferred family names before use.
 
-## First milestone
-Create a popup that displays the current page’s title and URL, with a button to copy the URL.
+## Scope and limitations
+- First version for standalone online news articles, not a universal citation generator.
+- Missing fields show a “Not found” placeholder. Website metadata can be missing, inaccurate, or inconsistent.
+- Live-page details describe the whole page; selecting individual updates is not supported.
+- Name parsing defaults to treating the last word as the family name and can require correction.
+- AMA titles need manual review for sentence case and proper nouns. Every standalone AMA reference starts at 1; renumber it to its order of first citation in your paper.
+- Access dates use the current local date. The extension does not track earlier visits or accept a separate access date.
+- Edits and generated citations reset when the popup closes. No saved library, bibliography management, or in-text citation insertion is provided.
+- Browser-internal pages and some protected pages cannot be inspected.
+
+## Privacy and permissions
+`activeTab` grants temporary access to the current page when the extension is invoked. `scripting` lets it read page metadata. Page data is processed locally; the extension does not send it to a server, use analytics, or persist it in browser storage. Copy buttons write to your system clipboard only when clicked. Citation styles and the formatting library are bundled locally.
+
+## Validation
+- 17 automated tests cover extraction and formatting, including malformed metadata, missing dates, multiple authors, live updates, invalid input, and switching citation styles.
+- User-reported manual checks covered MLA extraction/generation/copying on one Fox News, one CNN, and one NBC article, plus AMA generation/copying on the Fox News article.
+- These examples do not establish complete compatibility with any publisher. Full browser automation is not yet included.
+
+With Node.js installed, run:
+
+```sh
+node --test tests/*.test.cjs
+```
+
+## How the code is organized
+| File | Purpose |
+| --- | --- |
+| `manifest.json` | Extension configuration and permissions |
+| `popup.html` / `popup.css` | Popup structure and appearance |
+| `popup.js` | Browser interaction, form events, display, and copying |
+| `metadata.js` | Webpage metadata extraction |
+| `citation.js` | Convert reviewed fields to CSL data and invoke the formatter |
+| `vendor/` | Bundled formatter, citation styles, locale, and license notices |
+| `tests/` | Automated extraction and formatting checks |
 
 ## Development approach
-This project uses AI-assisted development. I am directing the features, reviewing the implementation, and learning to test and debug the extension.
+This project was built with substantial AI-generated code and AI-assisted debugging. The developer directed the features, manually tested example articles, and is learning the implementation through guided code walkthroughs.
 
-## Citation formatting and third-party code
-Formatting uses bundled citeproc-js and Citation Style Language MLA 9 and AMA 11 styles. No server or AI call is required. See `vendor/README.md`, `vendor/LICENSE`, and `vendor/AGPL-3.0.txt` for dependency attribution and licensing. The browser export in citeproc-js has a small compatibility guard; its formatting logic is unchanged. These licenses apply to the bundled third-party materials; the project's own license has not yet been selected.
+## License
+Article Citation Helper is licensed under the **GNU Affero General Public License, version 3 or (at your option) any later version** (`AGPL-3.0-or-later`). See [LICENSE](LICENSE).
 
-Scope: standalone online news articles, works-cited entries only. No automatic guarantee of source completeness, author-name parsing, or suitability for all source types. Citation output can preserve italics in rich-text editors; plain-text fallback requires restoring italics manually.
+You may use, study, modify, and share it under that license. It is provided without warranty. Preserve applicable notices and provide corresponding source when required by the license, including its provisions for modified software used over a network.
 
-## AMA notes
-AMA output is a single reference numbered 1; renumber it to its order of first citation in the paper. This extension does not manage a whole bibliography or insert in-text citations. Review title sentence case and proper nouns manually; the formatter preserves the supplied title. Switching styles clears the old citation. Author initials and author-count rules come from the bundled AMA 11 style. Publication and access dates are included when available.
+Third-party components retain their notices and licenses:
+
+- **citeproc-js 2.4.63**, copyright Frank Bennett, offers CPAL or AGPL licensing in its bundled notice; this project uses its AGPL option. See `vendor/LICENSE` and `vendor/AGPL-3.0.txt`. The only local modification guards its CommonJS export for browser use (26 September 2026).
+- **CSL MLA 9 and AMA 11 styles and the English locale** retain their contributors and CC BY-SA 3.0 notices in the XML files. See `vendor/README.md` for upstream sources.
+
+The CSL data files retain their CC BY-SA 3.0 licensing; they are not relicensed by the project license.

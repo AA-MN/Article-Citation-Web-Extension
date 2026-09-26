@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
 // Runs inside the webpage, so this function must be self-contained.
 function extractArticleMetadata() {
   const clean = value => typeof value === "string" ? value.trim() : "";

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
 const fields = Object.fromEntries(["title", "author", "publication", "published", "url"].map(key => [key, document.getElementById(key)]));
 const copyButton = document.getElementById("copy-button");
 const statusElement = document.getElementById("status");

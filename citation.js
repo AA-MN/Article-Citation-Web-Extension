@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
 // Convert reviewed form values into the citation processor's standard data format.
 function citationItem(values, today = new Date()) {
   const title = values.title.trim();
