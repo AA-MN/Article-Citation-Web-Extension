@@ -1,9 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Article Citation",
-  "version": "0.1.0",
-  "description": "Review the current page title and copy its URL. Citation formatting is planned.",
-  "permissions": ["activeTab"],
+  "version": "0.2.0",
+  "description": "Extract and review article metadata. Citation formatting is planned.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
   "action": {
     "default_title": "Article Citation",
     "default_popup": "popup.html"

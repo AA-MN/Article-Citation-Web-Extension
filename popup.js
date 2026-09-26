@@ -1,42 +1,50 @@
-const titleElement = document.getElementById("page-title");
-const urlElement = document.getElementById("page-url");
+const fields = Object.fromEntries(["title", "author", "publication", "published", "url"].map(key => [key, document.getElementById(key)]));
 const copyButton = document.getElementById("copy-button");
 const statusElement = document.getElementById("status");
-
-let currentUrl = "";
+const noticeElement = document.getElementById("notice");
 
 async function loadCurrentPage() {
   try {
-    // Read the active tab each time the popup opens, so details stay current.
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.url) {
-      throw new Error("Page information is unavailable.");
-    }
-
-    const url = new URL(tab.url);
-    if (url.protocol !== "https:" && url.protocol !== "http:") {
+    if (!tab?.url || !/^https?:/.test(tab.url)) {
       throw new Error("Please open a regular website, then try again.");
     }
-
-    currentUrl = tab.url;
-    // textContent treats page metadata as text, never as executable HTML.
-    titleElement.textContent = tab.title || "Untitled page";
-    urlElement.textContent = currentUrl;
+    let data = { title: tab.title || "", url: tab.url };
+    try {
+      const [execution] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id }, func: extractArticleMetadata,
+      });
+      if (!execution?.result) throw new Error("No metadata returned.");
+      data = execution.result;
+      noticeElement.textContent = data.isLive
+        ? "Live coverage: these details describe the whole page, not an individual update. Review the author and date carefully."
+        : "Check these details against the article. Missing information is left blank for you to fill in.";
+    } catch {
+      noticeElement.textContent = "Chrome could not read this page’s metadata. You can still copy its URL or enter details yourself.";
+    }
+    for (const [key, input] of Object.entries(fields)) {
+      input.value = data[key] || "";
+      input.disabled = false;
+    }
     copyButton.disabled = false;
   } catch (error) {
-    titleElement.textContent = "Page unavailable";
-    urlElement.textContent = "—";
     statusElement.textContent = error.message || "Unable to read this page.";
   }
 }
 
 copyButton.addEventListener("click", async () => {
   try {
-    await navigator.clipboard.writeText(currentUrl);
+    const url = new URL(fields.url.value);
+    if (!["http:", "https:"].includes(url.protocol)) throw new Error();
+  } catch {
+    statusElement.textContent = "Enter a valid http or https URL first.";
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(fields.url.value);
     statusElement.textContent = "URL copied to clipboard.";
   } catch {
-    statusElement.textContent = "Could not copy automatically. Select the URL above and copy it manually.";
+    statusElement.textContent = "Could not copy automatically. Select the URL and copy it manually.";
   }
 });
-
 loadCurrentPage();

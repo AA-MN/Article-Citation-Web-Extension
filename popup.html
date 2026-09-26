@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Article Citation</title>
     <link rel="stylesheet" href="popup.css">
+    <script src="metadata.js" defer></script>
     <script src="popup.js" defer></script>
   </head>
   <body>
@@ -14,15 +15,22 @@
         <h1>Your page, captured.</h1>
         <p class="intro">Review this page’s details before saving its link.</p>
       </header>
-      <section aria-label="Current page details">
-        <h2>Page title</h2>
-        <p id="page-title">Loading…</p>
-        <h2>Page URL</h2>
-        <p id="page-url">Loading…</p>
+      <section aria-label="Article details">
+        <label for="title">Article title</label>
+        <input id="title" type="text" placeholder="Not found" disabled>
+        <label for="author">Author(s)</label>
+        <input id="author" type="text" placeholder="Not found" disabled>
+        <label for="publication">Publication</label>
+        <input id="publication" type="text" placeholder="Not found" disabled>
+        <label for="published">Published date</label>
+        <input id="published" type="text" placeholder="Not found" disabled>
+        <label for="url">Page URL</label>
+        <input id="url" type="text" placeholder="Not found" disabled>
       </section>
+      <p id="notice" class="intro"></p>
       <button id="copy-button" type="button" disabled>Copy URL</button>
       <p id="status" role="status" aria-live="polite"></p>
-      <footer>First milestone · Citation formatting coming later</footer>
+      <footer>Edits last until you close this popup · Citations coming later</footer>
     </main>
   </body>
 </html>
