@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Article Citation</title>
+    <link rel="stylesheet" href="popup.css">
+    <script src="popup.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">ARTICLE CITATION</p>
+        <h1>Your page, captured.</h1>
+        <p class="intro">Review this page’s details before saving its link.</p>
+      </header>
+      <section aria-label="Current page details">
+        <h2>Page title</h2>
+        <p id="page-title">Loading…</p>
+        <h2>Page URL</h2>
+        <p id="page-url">Loading…</p>
+      </section>
+      <button id="copy-button" type="button" disabled>Copy URL</button>
+      <p id="status" role="status" aria-live="polite"></p>
+      <footer>First milestone · Citation formatting coming later</footer>
+    </main>
+  </body>
+</html>

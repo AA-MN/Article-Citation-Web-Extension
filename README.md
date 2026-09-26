@@ -3,7 +3,7 @@
 A Chrome extension that will extract article information and generate MLA and AMA citations.
 
 ## Project status
-Early development. The extension is not functional yet.
+Early development. The first popup is implemented: it displays the current page’s title and URL and includes a Copy URL button. Manual testing in Chrome is the next step. Citation extraction and formatting are not implemented yet.
 
 ## Planned features
 - Extract article titles, authors, publication names, dates, and URLs.
