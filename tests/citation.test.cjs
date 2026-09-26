@@ -10,7 +10,7 @@ const style = fs.readFileSync(path.join(root, 'vendor/mla.csl'), 'utf8');
 const locale = fs.readFileSync(path.join(root, 'vendor/locales-en-US.xml'), 'utf8');
 const base = { title: 'A Test Article', author: 'Jane Smith', publication: 'Example News', published: '2026-09-25T23:30:00-05:00', url: 'https://example.com/article' };
 const item = values => context.citationItem({ ...base, ...values }, new Date(2026, 8, 26));
-const format = values => context.formatMLA(item(values), style, locale, 'text');
+const format = values => context.formatCitation(item(values), style, locale, 'text');
 test('MLA renders author, title, publication and original calendar date', () => {
   const text = format({});
   assert.match(text, /Smith, Jane/);
@@ -40,5 +40,35 @@ test('partial dates remain partial', () => {
   assert.equal(item({ published: '2026' }).issued['date-parts'][0].length, 1);
 });
 test('HTML output includes publication italics', () => {
-  assert.match(context.formatMLA(item({}), style, locale), /<i>Example News<\/i>/);
+  assert.match(context.formatCitation(item({}), style, locale), /<i>Example News<\/i>/);
+});
+
+const amaStyle = fs.readFileSync(path.join(root, 'vendor/ama.csl'), 'utf8');
+const ama = values => context.formatCitation(item(values), amaStyle, locale, 'text');
+test('AMA formats initials, numbering, full publication and access dates', () => {
+  const text = ama({ author: 'Rebecca Keegan', title: 'A study of NBC News' });
+  assert.match(text, /^1\. Keegan R\./);
+  assert.match(text, /September 25, 2026\./);
+  assert.match(text, /Accessed September 26, 2026\./);
+  assert.match(text, /A study of NBC News/);
+  assert.doesNotMatch(text, /[“”]/);
+});
+test('AMA lists three authors instead of MLA et al', () => {
+  const text = ama({ author: 'Lauren Fox; Patrick Svitek; Dianne Gallagher' });
+  assert.match(text, /Fox L, Svitek P, Gallagher D/);
+  assert.doesNotMatch(text, /et al/);
+});
+test('AMA shortens seven authors to the first three and et al', () => {
+  assert.match(ama({ author: 'Amy One; Bob Two; Cal Three; Dan Four; Eve Five; Fay Six; Gus Seven' }), /One A, Two B, Three C, et al/);
+});
+test('AMA missing author and date retains title and access date', () => {
+  const text = ama({ author: '', published: '' });
+  assert.match(text, /^1\. A Test Article/);
+  assert.match(text, /Accessed September 26, 2026/);
+  assert.doesNotMatch(text, /undefined|Invalid/);
+});
+test('alternating styles does not reuse the previous formatting', () => {
+  assert.match(format({}), /Smith, Jane/);
+  assert.match(ama({}), /Smith J/);
+  assert.match(format({}), /Smith, Jane/);
 });

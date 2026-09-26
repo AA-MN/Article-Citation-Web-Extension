@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Article Citation",
-  "version": "0.3.0",
-  "description": "Review article metadata and generate MLA 9 works-cited entries locally.",
+  "version": "0.4.0",
+  "description": "Review article metadata and generate MLA 9 or AMA 11 references locally.",
   "permissions": [
     "activeTab",
     "scripting"

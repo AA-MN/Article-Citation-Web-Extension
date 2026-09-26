@@ -32,7 +32,7 @@ function citationItem(values, today = new Date()) {
   });
   return item;
 }
-function formatMLA(item, style, locale, output = 'html') {
+function formatCitation(item, style, locale, output = 'html') {
   const processor = new CSL.Engine({ retrieveLocale: () => locale, retrieveItem: () => item }, style, 'en-US');
   processor.setOutputFormat(output);
   processor.updateItems([item.id]);

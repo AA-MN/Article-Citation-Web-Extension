@@ -56,7 +56,19 @@ const citationSection = document.getElementById('citation-section');
 const citationOutput = document.getElementById('citation-output');
 let citationText = '';
 let citationHtml = '';
-let citationAssets;
+const citationAssets = new Map();
+const styleSelect = document.getElementById('citation-style');
+const styles = {
+  mla: { path: 'vendor/mla.csl', button: 'Generate MLA citation', heading: 'MLA 9 · Works cited entry', note: 'Generates a works-cited entry.' },
+  ama: { path: 'vendor/ama.csl', button: 'Generate AMA citation', heading: 'AMA 11 · Reference entry', note: 'This single reference starts at 1. Renumber it to match its order of first citation in your paper. Review title capitalization: AMA uses sentence case; preserve proper nouns.' },
+};
+styleSelect.addEventListener('change', () => {
+  clearCitation();
+  const selected = styles[styleSelect.value];
+  generateButton.textContent = selected.button;
+  document.getElementById('citation-heading').textContent = selected.heading;
+  document.getElementById('style-note').textContent = selected.note;
+});
 function clearCitation() {
   citationText = '';
   citationHtml = '';
@@ -71,8 +83,9 @@ function safeCitationMarkup(markup) {
   const parsed = new DOMParser().parseFromString(markup, 'text/html');
   function copy(node) {
     if (node.nodeType === Node.TEXT_NODE) return document.createTextNode(node.textContent);
-    const result = document.createElement(['I', 'EM', 'B', 'STRONG', 'DIV', 'SPAN'].includes(node.nodeName) ? node.nodeName.toLowerCase() : 'span');
+    const result = document.createElement(['I', 'EM', 'B', 'STRONG', 'SPAN'].includes(node.nodeName) ? node.nodeName.toLowerCase() : 'span');
     for (const child of node.childNodes) result.append(copy(child));
+    if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains("csl-left-margin")) result.append(document.createTextNode(" "));
     return result;
   }
   const container = document.createElement('div');
@@ -82,21 +95,25 @@ function safeCitationMarkup(markup) {
 generateButton.addEventListener('click', async () => {
   clearCitation();
   generateButton.disabled = true;
+  styleSelect.disabled = true;
   // Disable editing during this short local operation to avoid stale output.
   for (const input of Object.values(fields)) input.disabled = true;
   try {
     const values = Object.fromEntries(Object.entries(fields).map(([key, input]) => [key, input.value]));
     const item = citationItem(values);
-    if (!citationAssets) citationAssets = Promise.all(['vendor/mla.csl', 'vendor/locales-en-US.xml'].map(async path => {
-      const response = await fetch(chrome.runtime.getURL(path));
-      if (!response.ok) throw new Error('Could not load the bundled citation style. Reload the extension.');
-      return response.text();
-    })).catch(error => { citationAssets = undefined; throw error; });
-    const [style, locale] = await citationAssets;
-    const markup = safeCitationMarkup(formatMLA(item, style, locale));
+    const selected = styles[styleSelect.value];
+    if (!citationAssets.has(selected.path)) {
+      citationAssets.set(selected.path, Promise.all([selected.path, 'vendor/locales-en-US.xml'].map(async path => {
+        const response = await fetch(chrome.runtime.getURL(path));
+        if (!response.ok) throw new Error('Could not load the bundled citation style. Reload the extension.');
+        return response.text();
+      })).catch(error => { citationAssets.delete(selected.path); throw error; }));
+    }
+    const [style, locale] = await citationAssets.get(selected.path);
+    const markup = safeCitationMarkup(formatCitation(item, style, locale));
     citationOutput.replaceChildren(markup);
     citationHtml = markup.innerHTML;
-    citationText = markup.textContent.trim();
+    citationText = formatCitation(item, style, locale, 'text');
     citationSection.hidden = false;
     copyCitationButton.disabled = false;
     statusElement.textContent = 'Review the author name order and citation before using it. Access date uses today’s date.';
@@ -104,6 +121,7 @@ generateButton.addEventListener('click', async () => {
     statusElement.textContent = error.message || 'Unable to generate the citation.';
   } finally {
     generateButton.disabled = false;
+    styleSelect.disabled = false;
     for (const input of Object.values(fields)) input.disabled = false;
   }
 });

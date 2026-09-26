@@ -4,3 +4,6 @@ Locale: https://github.com/citation-style-language/locales/blob/master/locales-e
 CSL style and locale licensed CC BY-SA 3.0; attribution and contributors are retained in their XML.
 Downloaded 2026-09-26. All formatting runs locally.
 Browser adaptation: guarded the final CommonJS export; no formatting logic changed.
+
+AMA 11 style: https://github.com/citation-style-language/styles/blob/master/american-medical-association.csl
+Downloaded 2026-09-26. Unmodified; CC BY-SA 3.0, contributors retained in XML.
