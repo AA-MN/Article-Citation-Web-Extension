@@ -65,7 +65,7 @@ node --test tests/*.test.cjs
 | `tests/` | Automated extraction and formatting checks |
 
 ## Development approach
-This project was built with substantial AI-generated code and AI-assisted debugging. The developer directed the features, manually tested example articles, and is learning the implementation through guided code walkthroughs.
+Built with AI-assisted development, manual browser testing, and automated tests.
 
 ## License
 Article Citation Helper is licensed under the **GNU Affero General Public License, version 3 or (at your option) any later version** (`AGPL-3.0-or-later`). See [LICENSE](LICENSE).
