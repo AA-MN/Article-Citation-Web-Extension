@@ -1,11 +1,11 @@
 # Article Citation Helper
 
-A Chrome extension that reads article metadata, lets you correct it, and generates MLA 9 or AMA 11 references. Formatting runs locally, without an AI API or backend server.
+A Chrome extension that reads article metadata, lets you correct it, and generates MLA 9, AMA 11, or APA 7 references. Formatting runs locally, without an AI API or backend server.
 
 ## Features
 - Extract article titles, authors, publication names, publication dates, and URLs from common JSON-LD and meta tags.
 - Review and edit extracted fields before formatting.
-- Generate an MLA works-cited entry or an AMA reference.
+- Generate an MLA works-cited entry, AMA reference, or APA reference.
 - Copy formatted citations, with a plain-text fallback.
 - Clear stale citations when a field or style changes.
 - Flag live coverage so page-level metadata is not mistaken for an individual update.
@@ -23,7 +23,7 @@ No package installation or build step is needed to run the extension. After chan
 
 ## Use
 1. Compare the extracted fields with the article and correct them if needed.
-2. Choose **MLA 9** or **AMA 11** and click **Generate**.
+2. Choose **MLA 9**, **AMA 11**, or **APA 7** and click **Generate**.
 3. Review the result, then click **Copy citation**.
 4. Paste into a rich-text editor to preserve formatting when supported. Plain-text copying does not preserve italics.
 
@@ -43,7 +43,7 @@ Dates accept `YYYY-MM-DD`, ISO timestamps, `YYYY-MM`, or `YYYY`. Leave unknown d
 `activeTab` grants temporary access to the current page when the extension is invoked. `scripting` lets it read page metadata. Page data is processed locally; the extension does not send it to a server, use analytics, or persist it in browser storage. Copy buttons write to your system clipboard only when clicked. Citation styles and the formatting library are bundled locally.
 
 ## Validation
-- 17 automated tests cover extraction and formatting, including malformed metadata, missing dates, multiple authors, live updates, invalid input, and switching citation styles.
+- 22 automated tests cover extraction and formatting, including malformed metadata, missing dates, multiple authors, live updates, invalid input, and switching citation styles.
 - User-reported manual checks covered MLA extraction/generation/copying on one Fox News, one CNN, and one NBC article, plus AMA generation/copying on the Fox News article.
 - These examples do not establish complete compatibility with any publisher. Full browser automation is not yet included.
 
@@ -75,6 +75,9 @@ You may use, study, modify, and share it under that license. It is provided with
 Third-party components retain their notices and licenses:
 
 - **citeproc-js 2.4.63**, copyright Frank Bennett, offers CPAL or AGPL licensing in its bundled notice; this project uses its AGPL option. See `vendor/LICENSE` and `vendor/AGPL-3.0.txt`. The only local modification guards its CommonJS export for browser use (26 September 2026).
-- **CSL MLA 9 and AMA 11 styles and the English locale** retain their contributors and CC BY-SA 3.0 notices in the XML files. See `vendor/README.md` for upstream sources.
+- **CSL MLA 9, AMA 11, and APA 7 styles and the English locale** retain their contributors and CC BY-SA 3.0 notices in the XML files. See `vendor/README.md` for upstream sources.
 
 The CSL data files retain their CC BY-SA 3.0 licensing; they are not relicensed by the project license.
+
+## APA 7
+Select the source type: **News website** for sources such as CNN, NBC, and Fox News; **Newspaper article** for an online newspaper article. APA italicizes the article title for the former and the newspaper name for the latter. Review title sentence case and proper nouns manually. Missing dates appear as `n.d.`. These standalone references omit retrieval dates; continuously changing pages require separate judgment and are outside this feature's scope. APA browser testing is pending; automated formatting tests pass. Selecting a different source type clears the previous result.

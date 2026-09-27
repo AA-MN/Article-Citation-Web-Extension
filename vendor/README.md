@@ -7,3 +7,6 @@ Browser adaptation: guarded the final CommonJS export; no formatting logic chang
 
 AMA 11 style: https://github.com/citation-style-language/styles/blob/master/american-medical-association.csl
 Downloaded 2026-09-26. Unmodified; CC BY-SA 3.0, contributors retained in XML.
+
+APA 7 style: https://github.com/citation-style-language/styles/blob/master/apa.csl
+Downloaded 2026-09-27. CC BY-SA 3.0, contributors retained in XML. Local adaptation: retrieval wording requires an accessed date, avoiding a dangling “Retrieved” for undated stable articles.

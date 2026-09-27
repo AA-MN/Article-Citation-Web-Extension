@@ -38,16 +38,24 @@
       <select id="citation-style">
         <option value="mla">MLA 9</option>
         <option value="ama">AMA 11</option>
+        <option value="apa">APA 7</option>
       </select>
+      <div id="apa-options" hidden>
+        <label for="apa-source-type">APA source type</label>
+        <select id="apa-source-type">
+          <option value="webpage">News website (CNN, NBC, Fox News)</option>
+          <option value="article-newspaper">Newspaper article (e.g., The New York Times)</option>
+        </select>
+      </div>
       <p id="style-note" class="intro">Generates a works-cited entry.</p>
       <button id="generate-button" type="button" disabled>Generate MLA citation</button>
-      <section id="citation-section" hidden aria-label="MLA citation">
+      <section id="citation-section" hidden aria-label="Generated citation">
         <h2 id="citation-heading">MLA 9 · Works cited entry</h2>
         <div id="citation-output"></div>
         <button id="copy-citation" type="button" disabled>Copy citation</button>
       </section>
       <p id="status" role="status" aria-live="polite"></p>
-      <footer>Edits last until you close this popup · MLA 9 / AMA 11 · Formatting by citeproc-js<br><a href="LICENSE" target="_blank" rel="noopener">AGPL-3.0-or-later · No warranty</a> · <a href="https://github.com/AA-MN/Article-Citation-Web-Extension" target="_blank" rel="noopener">Source code</a></footer>
+      <footer>Edits last until you close this popup · MLA 9 / AMA 11 / APA 7 · Formatting by citeproc-js<br><a href="LICENSE" target="_blank" rel="noopener">AGPL-3.0-or-later · No warranty</a> · <a href="https://github.com/AA-MN/Article-Citation-Web-Extension" target="_blank" rel="noopener">Source code</a></footer>
     </main>
   </body>
 </html>

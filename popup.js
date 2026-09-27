@@ -59,12 +59,17 @@ let citationText = '';
 let citationHtml = '';
 const citationAssets = new Map();
 const styleSelect = document.getElementById('citation-style');
+const apaOptions = document.getElementById('apa-options');
+const apaSourceType = document.getElementById('apa-source-type');
+apaSourceType.addEventListener('change', clearCitation);
 const styles = {
+  apa: { path: 'vendor/apa.csl', button: 'Generate APA citation', heading: 'APA 7 · Reference entry', note: 'Choose news website or newspaper article. Review sentence case and proper nouns in the title. No retrieval date is added for these standalone articles.' },
   mla: { path: 'vendor/mla.csl', button: 'Generate MLA citation', heading: 'MLA 9 · Works cited entry', note: 'Generates a works-cited entry.' },
   ama: { path: 'vendor/ama.csl', button: 'Generate AMA citation', heading: 'AMA 11 · Reference entry', note: 'This single reference starts at 1. Renumber it to match its order of first citation in your paper. Review title capitalization: AMA uses sentence case; preserve proper nouns.' },
 };
 styleSelect.addEventListener('change', () => {
   clearCitation();
+  apaOptions.hidden = styleSelect.value !== 'apa';
   const selected = styles[styleSelect.value];
   generateButton.textContent = selected.button;
   document.getElementById('citation-heading').textContent = selected.heading;
@@ -97,11 +102,12 @@ generateButton.addEventListener('click', async () => {
   clearCitation();
   generateButton.disabled = true;
   styleSelect.disabled = true;
+  apaSourceType.disabled = true;
   // Disable editing during this short local operation to avoid stale output.
   for (const input of Object.values(fields)) input.disabled = true;
   try {
     const values = Object.fromEntries(Object.entries(fields).map(([key, input]) => [key, input.value]));
-    const item = citationItem(values);
+    const item = prepareCitationItem(citationItem(values), styleSelect.value, apaSourceType.value);
     const selected = styles[styleSelect.value];
     if (!citationAssets.has(selected.path)) {
       citationAssets.set(selected.path, Promise.all([selected.path, 'vendor/locales-en-US.xml'].map(async path => {
@@ -117,12 +123,13 @@ generateButton.addEventListener('click', async () => {
     citationText = formatCitation(item, style, locale, 'text');
     citationSection.hidden = false;
     copyCitationButton.disabled = false;
-    statusElement.textContent = 'Review the author name order and citation before using it. Access date uses today’s date.';
+    statusElement.textContent = styleSelect.value === 'apa' ? 'Review author names, source type, and title capitalization before using this reference.' : 'Review the author name order and citation before using it. Access date uses today’s date.';
   } catch (error) {
     statusElement.textContent = error.message || 'Unable to generate the citation.';
   } finally {
     generateButton.disabled = false;
     styleSelect.disabled = false;
+    apaSourceType.disabled = false;
     for (const input of Object.values(fields)) input.disabled = false;
   }
 });

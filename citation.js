@@ -39,3 +39,13 @@ function formatCitation(item, style, locale, output = 'html') {
   processor.updateItems([item.id]);
   return processor.makeBibliography()[1].join('').trim();
 }
+
+// APA distinguishes news websites from newspapers; do not infer this from a URL.
+function prepareCitationItem(item, style, sourceType = 'webpage') {
+  if (style !== 'apa') return item;
+  if (!['webpage', 'article-newspaper'].includes(sourceType)) throw new Error('Choose a supported APA source type.');
+  const prepared = { ...item, type: sourceType };
+  // Dated, stable articles do not normally need a retrieval date in APA.
+  delete prepared.accessed;
+  return prepared;
+}

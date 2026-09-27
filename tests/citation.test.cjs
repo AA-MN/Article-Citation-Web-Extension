@@ -73,3 +73,37 @@ test('alternating styles does not reuse the previous formatting', () => {
   assert.match(ama({}), /Smith J/);
   assert.match(format({}), /Smith, Jane/);
 });
+
+const apaStyle = fs.readFileSync(path.join(root, 'vendor/apa.csl'), 'utf8');
+const apa = (values, type = 'webpage', output = 'text') => context.formatCitation(context.prepareCitationItem(item(values), 'apa', type), apaStyle, locale, output);
+test('APA news website: initials, date, italic title and no retrieval date', () => {
+  const text = apa({ author: 'Rebecca Keegan', title: 'A test of NBC News' });
+  assert.match(text, /^Keegan, R\. \(2026, September 25\)\./);
+  assert.doesNotMatch(text, /Accessed|Retrieved|^1\./);
+  const html = apa({ title: 'A test of NBC News' }, 'webpage', 'html');
+  assert.match(html, /<i>A test of NBC News<\/i>/);
+  assert.doesNotMatch(html, /<i>Example News<\/i>/);
+});
+test('APA newspaper italicizes publication instead of title', () => {
+  const html = apa({ title: 'A test of NBC News' }, 'article-newspaper', 'html');
+  assert.match(html, /<i>Example News<\/i>/);
+  assert.doesNotMatch(html, /<i>A test of NBC News<\/i>/);
+});
+test('APA uses ampersand and preserves three authors', () => {
+  assert.match(apa({ author: 'Lauren Fox; Patrick Svitek; Dianne Gallagher' }), /Fox, L\., Svitek, P\., & Gallagher, D\./);
+});
+test('APA handles missing author and date', () => {
+  const text = apa({ author: '', published: '' });
+  assert.match(text, /^A Test Article\. \(n\.d\.\)/);
+  assert.doesNotMatch(text, /undefined|Invalid|Retrieved/);
+});
+test('APA preparation does not mutate MLA/AMA data', () => {
+  const original = item({});
+  const prepared = context.prepareCitationItem(original, 'apa');
+  assert.equal(original.type, 'article-newspaper');
+  assert.ok(original.accessed);
+  assert.equal(prepared.type, 'webpage');
+  assert.equal(prepared.accessed, undefined);
+  assert.equal(context.prepareCitationItem(original, 'mla'), original);
+  assert.throws(() => context.prepareCitationItem(original, 'apa', 'unknown'), /source type/);
+});
